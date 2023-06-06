@@ -3,6 +3,10 @@
 {%- liquid
   assign bg_color = section.settings.bg_color
   assign text_color = section.settings.color
+
+  if text_color == 'rgba(0,0,0,0)' or text_color == blank
+    assign text_color = settings.text_color
+  endif
 -%}
 
 {%- style -%}
@@ -17,8 +21,10 @@
     {%- unless text_color == 'rgba(0,0,0,0)' or text_color == blank -%}
       --text: {{ text_color }};
       --text-light: {{ text_color | color_mix: settings.bg_color, 70 }};
-      ---color-a70: {{ text_color | color_modify: 'alpha', 0.70 }};
-      ---color-a90: {{ text_color | color_modify: 'alpha', 0.90 }};
+      --text-dark: {{ text_color | color_saturate: 10 | color_darken: 15 }};
+      --text-a35: {{ text_color | color_modify: 'alpha', 0.35 }};
+      --text-a70: {{ text_color | color_modify: 'alpha', 0.70 }};
+      --text-a75: {{ text_color | color_modify: 'alpha', 0.75 }};
     {%- endunless -%}
   }
 {%- endstyle -%}
@@ -50,65 +56,59 @@
         {%- case block.type -%}
 
           {%- when 'email' -%}
-            <div class="custom-form__block form-field" {{ block.shopify_attributes }}>
-              <label for="Form-{{ section.id }}-{{ forloop.index0 }}">{{ block.settings.title }}</label>
-              <input type="email" class="contactFormEmail" id="Form-{{ section.id }}-{{ forloop.index0 }}" name="contact[email]" placeholder="{{ block.settings.title }}" autocorrect="off" autocapitalize="off" {{ required }}/>
+            <div class="custom-form__block" {{ block.shopify_attributes }}>
+              <label for="Form-{{ section.id }}-{{ forloop.index0 }}" class="visually-hidden">{{ block.settings.title }}</label>
+              <input type="email" class="contactFormEmail field" id="Form-{{ section.id }}-{{ forloop.index0 }}" name="contact[email]" placeholder="{{ block.settings.title }}" autocorrect="off" autocapitalize="off" {{ required }}>
             </div>
 
           {%- when 'body' -%}
-            <div class="custom-form__block form-field" {{ block.shopify_attributes }}>
-              <label for="Form-{{ section.id }}-{{ forloop.index0 }}">{{ block.settings.title }}</label>
-              <textarea rows="10" id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormMessage" name="contact[body]" placeholder="{{ block.settings.title }}" {{ required }}></textarea>
+            <div class="custom-form__block" {{ block.shopify_attributes }}>
+              <label for="Form-{{ section.id }}-{{ forloop.index0 }}" class="visually-hidden">{{ block.settings.title }}</label>
+              <textarea rows="10" id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormMessage field" name="contact[body]" placeholder="{{ block.settings.title }}" {{ required }}></textarea>
             </div>
 
           {%- when 'text' -%}
-            <div class="custom-form__block form-field" {{ block.shopify_attributes }}>
-              <label for="Form-{{ section.id }}-{{ forloop.index0 }}">{{ block.settings.title }}</label>
-              <input type="text" class="contactFormText" id="Form-{{ section.id }}-{{ forloop.index0 }}" name="contact[{{ block.settings.title | handleize | default: 'text' }}]" placeholder="{{ block.settings.title }}" autocapitalize="words" value="" {{ required }}/>
+            <div class="custom-form__block" {{ block.shopify_attributes }}>
+              <label for="Form-{{ section.id }}-{{ forloop.index0 }}" class="visually-hidden">{{ block.settings.title }}</label>
+              <input type="text" class="contactFormText field" id="Form-{{ section.id }}-{{ forloop.index0 }}" name="contact[{{ block.settings.title | handleize | default: 'text' }}]" placeholder="{{ block.settings.title }}" autocapitalize="words" value="" {{ required }}>
             </div>
 
           {%- when 'textarea' -%}
-            <div class="custom-form__block form-field" {{ block.shopify_attributes }}>
-              <label for="Form-{{ section.id }}-{{ forloop.index0 }}">{{ block.settings.title }}</label>
-              <textarea rows="10" id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormMessage" name="contact[{{ block.settings.title | handleize | default: 'textarea' }}]" placeholder="{{ block.settings.title }}" {{ required }}></textarea>
+            <div class="custom-form__block" {{ block.shopify_attributes }}>
+              <label for="Form-{{ section.id }}-{{ forloop.index0 }}" class="visually-hidden">{{ block.settings.title }}</label>
+              <textarea rows="10" id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormMessage field" name="contact[{{ block.settings.title | handleize | default: 'textarea' }}]" placeholder="{{ block.settings.title }}" {{ required }}></textarea>
             </div>
 
           {%- when 'telephone' -%}
-            <div class="custom-form__block form-field" {{ block.shopify_attributes }}>
-              <label for="Form-{{ section.id }}-{{ forloop.index0 }}">{{ block.settings.title }}</label>
-              <input type="tel" id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormPhone" name="contact[telephone]" placeholder="{{ block.settings.title }}" value="" {{ required }}/>
-            </div>
-
-          {%- when 'name' -%}
-            <div class="custom-form__block form-field" {{ block.shopify_attributes }}>
-              <label  for="Form-{{ section.id }}-{{ forloop.index0 }}" class="label--hidden">{{ block.settings.title }}</label>
-              <input type="text" class="contactFormText" id="Form-{{ section.id }}-{{ forloop.index0 }}" name="contact[{{ block.settings.title | handleize | default: 'name' }}]" placeholder="{{ block.settings.title }}" autocapitalize="words" value="" {{ required }}/>
+            <div class="custom-form__block" {{ block.shopify_attributes }}>
+              <label for="Form-{{ section.id }}-{{ forloop.index0 }}" class="visually-hidden">{{ block.settings.title }}</label>
+              <input type="tel" id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormPhone field" name="contact[telephone]" placeholder="{{ block.settings.title }}" value="" {{ required }}>
             </div>
 
           {%- when 'formHeading' -%}
-            <div class="custom-form__block custom-form__block--heading form-item" {{ block.shopify_attributes }}>
+            <div class="custom-form__block custom-form__block--heading" {{ block.shopify_attributes }}>
               <p class="strong">{{ block.settings.title }}</p>
             </div>
 
           {%- when 'spacer' -%}
             {%- assign hr_class = 'hr--clear' -%}
             {%- if block.settings.line -%}
-              {%- assign hr_class = '' -%}
+              {%- assign hr_class = 'hr--color' -%}
             {%- endif -%}
-            <div class="form-item" {{ block.shopify_attributes }}>
+            <div {{ block.shopify_attributes }}>
               <hr class="{{ hr_class }}">
             </div>
 
           {%- when 'checkbox' -%}
-            <div class="custom-form__block form-item" {{ block.shopify_attributes }}>
+            <div class="custom-form__block checkbox" {{ block.shopify_attributes }}>
+              <input type="checkbox" id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormCheckbox" name="contact[{{ block.settings.title | handleize | default: 'checkbox' }}]" value="{{ block.settings.title }}" {{ required }}>
               <label for="Form-{{ section.id }}-{{ forloop.index0 }}">
-                <input type="checkbox" id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormCheckbox" name="contact[{{ block.settings.title | handleize | default: 'checkbox' }}]" value="{{ block.settings.title }}" {{ required }}>
                 {{ block.settings.title }}
               </label>
             </div>
 
           {%- when 'radio' -%}
-            <fieldset class="custom-form__block custom-form__block--group form-item" {{ block.shopify_attributes }}>
+            <fieldset class="custom-form__block custom-form__block--group" {{ block.shopify_attributes }}>
               {%- if block.settings.title != blank -%}
                 <legend class="custom-form__label">{{ block.settings.title }}</legend>
               {%- endif -%}
@@ -151,11 +151,11 @@
             </fieldset>
 
           {%- when 'select' -%}
-            <fieldset class="custom-form__block custom-form__block--group form-item" {{ block.shopify_attributes }}>
+            <fieldset class="custom-form__block custom-form__block--group" {{ block.shopify_attributes }}>
               {%- if block.settings.title != blank -%}
                 <label for="Form-{{ section.id }}-{{ forloop.index0 }}" class="custom-form__label label--block">{{ block.settings.title }}</label>
               {%- endif -%}
-              <select id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormSelect" name="contact[{{ block.settings.title | handleize | default: 'select' }}]">
+              <select id="Form-{{ section.id }}-{{ forloop.index0 }}" class="contactFormSelect field" name="contact[{{ block.settings.title | handleize | default: 'select' }}]">
                 {%- if block.settings.label-one != blank -%}
                   <option value="{{ block.settings.label-one }}">{{ block.settings.label-one }}</option>
                 {%- endif -%}
@@ -186,25 +186,27 @@
       {%- endfor -%}
 
       {%- unless types contains "email" -%}
-        <div class="custom-form__block form-field">
-          <label for="contactFormEmail">{{ 'contact.form.email' | t }}</label>
-          <input type="email" id="contactFormEmail" class="contactFormEmail" name="contact[email]" placeholder="{{ 'contact.form.email' | t }}" autocorrect="off" autocapitalize="off" required>
+        <div class="custom-form__block">
+          <label for="contactFormEmail" class="visually-hidden">{{ 'contact.form.email' | t }}</label>
+          <input type="email" id="contactFormEmail" class="contactFormEmail field" name="contact[email]" placeholder="{{ 'contact.form.email' | t }}" autocorrect="off" autocapitalize="off" required>
         </div>
-      {%- endunless  -%}
+      {%- endunless -%}
 
       {%- unless types contains "body" -%}
-      <div class="custom-form__block form-field">
-        <label for="ContactFormMessage">{{ 'contact.form.message' | t }}</label>
-        <textarea rows="10" id="ContactFormMessage" class="contactFormMessage" name="contact[body]" placeholder="{{ 'contact.form.message' | t }}"></textarea>
+      <div class="custom-form__block">
+        <label for="ContactFormMessage" class="visually-hidden">{{ 'contact.form.message' | t }}</label>
+        <textarea rows="10" id="ContactFormMessage" class="contactFormMessage field" name="contact[body]" placeholder="{{ 'contact.form.message' | t }}"></textarea>
       </div>
-      {%- endunless  -%}
+      {%- endunless -%}
 
-      <div class="form-item">
-        <input type="submit" class="btn btn--large btn--full" value="{{ 'contact.form.send' | t }}">
+      <div class="custom-form__block">
+        <button type="submit" class="btn btn--primary btn--solid btn--full">
+          {{ 'contact.form.send' | t }}
+        </button>
       </div>
 
       {%- if section.settings.terms -%}
-        <div class="form-item form__legal">
+        <div class="form__legal">
           {{ 'shopify.online_store.spam_detection.disclaimer_html' | t }}
         </div>
       {%- endif -%}
@@ -240,8 +242,7 @@
         "default": "wrapper--narrow",
         "options": [
           {"value": "wrapper", "label": "Normal"},
-          {"value": "wrapper--narrow", "label": "Narrow"},
-          {"value": "wrapper--full", "label": "Wide"}
+          {"value": "wrapper--narrow", "label": "Narrow"}
         ]
       },
       {
@@ -582,6 +583,9 @@
           }
         ]
       }
-    ]
+    ],
+    "disabled_on": {
+      "groups": ["header", "aside", "footer"]
+    }
   }
 {% endschema %}

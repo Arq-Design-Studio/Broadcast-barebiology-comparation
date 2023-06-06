@@ -1,8 +1,8 @@
-{%- render 'announcement' section: section, is_top: false -%}
+{%- render 'announcement', is_top: false -%}
 
 {% schema %}
 {
-  "name": "Announcement bar",
+  "name": "Scrolling text",
   "settings": [
     {
       "type": "header",
@@ -51,6 +51,19 @@
       "max": 300,
       "step": 25,
       "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Size",
+      "min": 1,
+      "max": 15,
+      "step": 1,
+      "default": 2
     },
     {
       "type": "header",
@@ -104,34 +117,6 @@
         },
         {
           "type": "header",
-          "content": "Target page"
-        },
-        {
-          "id": "target_url_enabled",
-          "type": "checkbox",
-          "label": "Limit to specific page"
-        },
-        {
-          "id": "target_url",
-          "type": "url",
-          "label": "Targeted page"
-        },
-        {
-          "type": "header",
-          "content": "Target referrer"
-        },
-        {
-          "id": "target_referrer_enabled",
-          "type": "checkbox",
-          "label": "Limit to specific referrer path"
-        },
-        {
-          "id": "target_referrer",
-          "type": "text",
-          "label": "Targeted referrer"
-        },
-        {
-          "type": "header",
           "content": "Target device"
         },
         {
@@ -167,39 +152,11 @@
           "id": "message",
           "label": "Message",
           "info": "Use ||amount|| to display progress towards free shipping.",
-          "default": "Spend ||amount|| more for free shipping."
+          "default": "You are ||amount|| away from free shipping."
         },
         {
           "type": "paragraph",
           "content": "Navigate to Theme settings -> \"Cart -> Free shipping message\" to set the amount."
-        },
-        {
-          "type": "header",
-          "content": "Target page"
-        },
-        {
-          "id": "target_url_enabled",
-          "type": "checkbox",
-          "label": "Limit to specific page"
-        },
-        {
-          "id": "target_url",
-          "type": "url",
-          "label": "Targeted page"
-        },
-        {
-          "type": "header",
-          "content": "Target referrer"
-        },
-        {
-          "id": "target_referrer_enabled",
-          "type": "checkbox",
-          "label": "Limit to specific referrer path"
-        },
-        {
-          "id": "target_referrer",
-          "type": "text",
-          "label": "Targeted referrer"
         },
         {
           "type": "header",
@@ -223,42 +180,14 @@
       ]
     },
     {
-      "type": "custom",
-      "name": "Custom HTML",
+      "type": "code",
+      "name": "Custom code",
       "settings": [
         {
-          "type": "html",
-          "id": "text",
-          "label": "Text",
-          "default": "<p>Custom HTML</p>"
-        },
-        {
-          "type": "header",
-          "content": "Target page"
-        },
-        {
-          "id": "target_url_enabled",
-          "type": "checkbox",
-          "label": "Limit to specific page"
-        },
-        {
-          "id": "target_url",
-          "type": "url",
-          "label": "Targeted page"
-        },
-        {
-          "type": "header",
-          "content": "Target referrer"
-        },
-        {
-          "id": "target_referrer_enabled",
-          "type": "checkbox",
-          "label": "Limit to specific referrer path"
-        },
-        {
-          "id": "target_referrer",
-          "type": "text",
-          "label": "Targeted referrer"
+          "type": "liquid",
+          "id": "code",
+          "label": "Code",
+          "default": "<p>Custom code</p>"
         },
         {
           "type": "header",
@@ -284,7 +213,7 @@
   ],
   "presets": [
     {
-      "name": "Announcement bar",
+      "name": "Scrolling text",
       "category": "Text",
       "blocks": [
         {
@@ -313,6 +242,9 @@
         }
       ]
     }
-  ]
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
 }
 {% endschema %}

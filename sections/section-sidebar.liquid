@@ -1,6 +1,5 @@
 <!-- /sections/section-rich-text.liquid -->
 {%- liquid
-  assign animation_anchor = '#Sidebar--' | append: section.id
   assign aside_html = ''
   assign content_html = ''
   assign first_element_flag = true
@@ -26,13 +25,25 @@
 
 {%- if section.blocks.size > 0 -%}
   {%- for block in section.blocks -%}
-    {%- assign current_block = block.settings -%}
+    {%- liquid
+      assign title = block.settings.title
+      assign text = block.settings.text
+      assign content = block.settings.content
+      assign unique = 'Widget--' | append: block.id
+    -%}
+
     {%- capture aside_html -%}
       {{ aside_html }}
 
-      {%- if block.type == 'header' and current_block.title != blank -%}
+      {%- if block.type == 'header' and title != blank -%}
         <li>
-          <a href="#"{% if first_element_flag %} class="is-selected"{% endif %} data-scroll-to="#{{ section.id }}-{{ block.id }}-{{ forloop.index0 }}" {{ block.shopify_attributes }}>{{ current_block.title }}</a>
+          <button type="button" class="widget__link{% if first_element_flag %} is-selected{% endif %}"
+            data-scroll-to="#{{ unique }}"
+            data-scroll-spy="#{{ unique }}"
+            data-scroll-spy-desktop
+            {{ block.shopify_attributes }}>
+            {{- title -}}
+          </button>
         </li>
         {%- assign first_element_flag = false -%}
       {%- endif -%}
@@ -41,26 +52,29 @@
     {%- capture content_html -%}
       {{ content_html }}
 
-      {%- if block.type == 'header' and current_block.title != blank -%}
-        <div class="section-sidebar__row section-sidebar__row--title">
-          <h6 class="section-sidebar__title" id="{{ section.id }}-{{ block.id }}-{{ forloop.index0 }}" {{ block.shopify_attributes }}>{{ current_block.title }}</h6>
-        </div>
+      {%- if block.type == 'header' and title != blank -%}
+        <h6 class="section-sidebar__title" id="{{ unique }}" {{ block.shopify_attributes }}>{{ title }}</h6>
       {%- endif -%}
 
-      {%- if block.type == 'text' and current_block.text != blank -%}
-        <div class="section-sidebar__row section-sidebar__row--text" {{ block.shopify_attributes }}>{{ current_block.text }}</div>
+      {%- if block.type == 'text' and text != blank -%}
+        <div class="section-sidebar__text rte" {{ block.shopify_attributes }}>{{ text }}</div>
       {%- endif -%}
 
-      {%- if block.type == 'accordion' and current_block.title != blank and current_block.content != blank -%}
-        <div class="section-sidebar__row section-sidebar__row--accordion">
-          <div class="accordion" data-accordion {{ block.shopify_attributes }}>
-            <p class="accordion__title" data-focus-element tabindex="0" data-accordion-toggle data-block-id="{{ block.id }}">{{ current_block.title }}</p>
+      {%- if block.type == 'accordion' and title != blank and content != blank -%}
+        <details class="accordion" data-collapsible {{ block.shopify_attributes }}>
+          <summary class="accordion__title" data-collapsible-trigger>
+            {{ title }}
 
-            <div class="rte accordion__body" data-accordion-body>
-              {{ current_block.content }}
+            {%- render 'icon-plus' -%}
+            {%- render 'icon-minus' -%}
+          </summary>
+
+          <div class="accordion__body rte" data-collapsible-body>
+            <div class="accordion__content" data-collapsible-content>
+              {{ content }}
             </div>
           </div>
-        </div>
+        </details>
       {%- endif -%}
     {%- endcapture -%}
   {%- endfor -%}
@@ -76,7 +90,7 @@
         <div class="section-sidebar__aside">
           <div class="section-sidebar__widget">
             {%- if aside_html != '' -%}
-              <ul class="widget__links widget__links--secondary" data-scroll-to-links data-scroll-spy>
+              <ul class="widget__links widget__links--secondary">
                 {{ aside_html }}
               </ul>
             {%- endif -%}
@@ -84,7 +98,9 @@
         </div>
 
         <div class="section-sidebar__content">
-          {{ content_html }}
+          <collapsible-elements single="true">
+            {{ content_html }}
+          </collapsible-elements>
         </div>
       </div>
     </div>
@@ -105,11 +121,10 @@
       "type": "select",
       "id": "width",
       "label": "Width",
-      "default": "wrapper--full",
+      "default": "wrapper--full-padded",
       "options": [
-        {"value": "wrapper", "label": "Normal"},
-        {"value": "wrapper--narrow", "label": "Narrow"},
-        {"value": "wrapper--full", "label": "Wide"}
+        {"value": "wrapper--full-padded", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Normal"}
       ]
     },
     {
@@ -247,6 +262,9 @@
         }
       ]
     }
-  ]
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside", "custom.pre_footer", "footer"]
+  }
 }
 {% endschema %}

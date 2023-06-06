@@ -2,7 +2,7 @@
   layout none
 
   if settings.currency_code_enable
-    assign gift_card_initial_value = gift_card.initial_value | money_with_currency | remove: '.00'
+    assign gift_card_initial_value = gift_card.initial_value | money_with_currency | remove: '.00' | remove: ',00'
     assign gift_card_balance = gift_card.balance | money_with_currency
   else
     assign gift_card_initial_value = gift_card.initial_value | money_without_trailing_zeros
@@ -19,9 +19,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ 'gift_cards.issued.title' | t: value: formatted_initial_value, shop: shop.name }}</title>
     <meta name="description" content="{{ 'gift_cards.issued.subtext' | t }}">
-    <link rel="canonical" href="{{ canonical_url }}" />
+    <link rel="canonical" href="{{ canonical_url }}">
     {%- if settings.favicon -%}
-      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png" />
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
     {%- endif -%}
 
     {{ 'font-settings.css' | asset_url | stylesheet_tag }}
@@ -42,7 +42,7 @@
       <!-- CONTENT -->
       <div class="main-content">
         <section class="page center">
-          <h2 class="theme">{{ page.title }}</h2>
+          <h2 class="page__heading">{{ page.title }}</h2>
 
           <main class="giftcard" role="main">
             <div class="giftcard__border{% if gift_card.expired or gift_card.enabled != true %} disabled{% endif %}">
@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="giftcard__wrap">
-                  <img src="{{ 'gift-card/card.jpg' | shopify_asset_url }}" alt="Gift card illustration">
+                  <img src="{{ 'gift-card/card.jpg' | shopify_asset_url }}" loading="lazy" alt="Gift card illustration">
 
                   {%- assign initial_value_size = formatted_initial_value | size -%}
 
@@ -142,7 +142,7 @@
     {%- if gift_card.pass_url -%}
       <footer role="contentinfo" class="gift-card-footer">
         <a href="{{ gift_card.pass_url }}">
-          <img id="apple-wallet-badge" src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}" width="120" height="40" alt="Add To Apple Wallet">
+          <img id="apple-wallet-badge" src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}" loading="lazy" width="120" height="40" alt="Add To Apple Wallet">
         </a>
       </footer>
     {%- endif -%}

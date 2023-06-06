@@ -31,23 +31,23 @@
         {%- if section.settings.product_recently_heading != blank -%}
           <ul class="tabs tabs--center" data-scrollbar data-scrollbar-slider>
             <li class="tab-link tab-link-0 tab-link__recent current" data-tab="0" tabindex="0">
-              <h2 class="recent__title">
-                {{- section.settings.product_recently_heading -}}
-              </h2>
+              <span>{{ section.settings.product_recently_heading }}</span>
             </li>
           </ul>
         {%- endif -%}
 
         <button type="button" class="tabs__arrow tabs__arrow--prev is-hidden" data-scrollbar-arrow-prev>
+          {%- render 'icon-nav-arrow-left' -%}
           <span class="visually-hidden">{{ 'products.general.see_all' | t }}</span>
         </button>
 
         <button type="button" class="tabs__arrow tabs__arrow--next is-hidden" data-scrollbar-arrow-next>
+          {%- render 'icon-nav-arrow-right' -%}
           <span class="visually-hidden">{{ 'products.general.see_all' | t }}</span>
         </button>
       </div>
 
-      <div class="tab-content tab-content-0 tabs__recently-viewed current" data-tab-index="1">
+      <div class="tab-content tab-content-0 tabs__recently-viewed current" data-tab-index="0">
         {%- render 'products-recently-viewed', product: product, limit: section.settings.product_recently_limit, product_recently_minimum: section.settings.product_recently_minimum -%}
       </div>
     </div>
@@ -127,6 +127,9 @@
       "category": "Collection",
       "name":"Recently viewed products"
     }
-  ]
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside", "footer"]
+  }
 }
 {% endschema %}

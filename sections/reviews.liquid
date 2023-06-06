@@ -1,9 +1,6 @@
 {%- if section.settings.enable_product_reviews -%}
   {%- style -%}
-    .product__badge-link:hover { color: var(--link-hover); cursor: pointer; }
-
-    .reviews-holder,
-    .product__reviews {
+    #Reviews--{{ product.id }} {
       --PT: {{ section.settings.padding_top }}px;
       --PB: {{ section.settings.padding_bottom }}px;
     }
@@ -15,34 +12,42 @@
     </div>
   {%- endcapture -%}
 
-  {%- if section.settings.enable_accordion -%}
-    <div id="Reviews--{{ product.id }}"
-      class="reviews-holder section-padding"
-      data-section-id="{{ section.id }}"
-      data-section-type="reviews">
-      <section class="accordion" data-accordion>
-        <h2 data class="accordion__title" data-focus-element tabindex="0" data-accordion-toggle>
-          {%- liquid
-            assign reviews_count = product.metafields.reviews.rating_count
-            assign reviews_label = 'products.general.reviews_with_count' | t: count: reviews_count
-            assign add_review_label = 'products.general.add_review' | t
+  <div id="Reviews--{{ product.id }}"
+    class="{{ section.settings.width }} reviews-holder section-padding"
+    data-section-id="{{ section.id }}"
+    data-section-type="reviews"
+  >
+    {%- if section.settings.enable_accordion -%}
+      <collapsible-elements>
+        <details class="accordion" data-collapsible>
+          <summary class="accordion__title h6" data-collapsible-trigger>
+            {%- liquid
+              assign reviews_count = product.metafields.reviews.rating_count
+              assign reviews_label = 'products.general.reviews_with_count' | t: count: reviews_count
+              assign add_review_label = 'products.general.add_review' | t
 
-            if reviews_count > 0
-              echo reviews_label
-            else
-              echo add_review_label
-            endif
-          -%}
-        </h2>
+              if reviews_count > 0
+                echo reviews_label
+              else
+                echo add_review_label
+              endif
+            -%}
 
-        <div class="accordion__body" data-accordion-body>
-          {{ reviews_markup }}
-        </div>
-      </section>
-    </div>
-  {%- else -%}
-    {{ reviews_markup | replace: 'product__reviews', 'product__reviews product__reviews--alt' }}
-  {%- endif -%}
+            {%- render 'icon-plus' -%}
+            {%- render 'icon-minus' -%}
+          </summary>
+
+          <div class="accordion__body" data-collapsible-body>
+            <div class="accordion__content" data-collapsible-content>
+              {{ reviews_markup }}
+            </div>
+          </div>
+        </details>
+      </collapsible-elements>
+    {%- else -%}
+      {{ reviews_markup | replace: 'product__reviews', 'product__reviews product__reviews--alt' }}
+    {%- endif -%}
+  </div>
 {%- endif -%}
 
 {% schema %}
@@ -62,6 +67,18 @@
         "id": "enable_accordion",
         "label": "Enable accordion",
         "default": true
+      },
+      {
+        "type": "select",
+        "id": "width",
+        "label": "Width",
+        "default": "wrapper",
+        "options": [
+          {"value": "wrapper--full", "label": "Full width"},
+          {"value": "wrapper--full-padded", "label": "Full width padded"},
+          {"value": "wrapper", "label": "Normal"},
+          {"value": "wrapper--narrow", "label": "Narrow"}
+        ]
       },
       {
         "type": "header",
